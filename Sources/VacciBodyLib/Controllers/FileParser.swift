@@ -49,7 +49,7 @@ final class ParserFastaFile {
   static func writeData(data: [MatchesData]) throws -> Void {
     
     // Save data to file
-    let fileName = "result.json"
+    let filePath = URL(fileURLWithPath: "/result.json")
     let json = try JSONEncoder().encode(data)
     guard let dataString = String(data: json, encoding: .utf8) else {
       throw FileParserError.cannotParseString
@@ -57,7 +57,11 @@ final class ParserFastaFile {
         
     return try """
     \(dataString)
-    """.write(toFile:fileName, atomically: false, encoding: .utf8)
+    """.write (
+      to: filePath,
+      atomically: false,
+      encoding: .utf8
+    )
     
   }
   
