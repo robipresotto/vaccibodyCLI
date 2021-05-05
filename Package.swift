@@ -32,6 +32,7 @@ let package = Package(
     ),
     .testTarget(
       name: "VacciBodyTests",
-      dependencies: ["VacciBodyLib"]),
+      dependencies: ["VacciBodyLib"]
+    ),
   ]
 )

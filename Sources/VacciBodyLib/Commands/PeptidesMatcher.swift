@@ -27,9 +27,11 @@ public struct PeptidesMatcher: ParsableCommand {
       title: "VacciBody CLI"
     )
     
+    
+    
     try Matcher.runAsync(
-      peptidesFilePath: peptidesFilePath,
-      proteomeFilePath: proteomeFilePath,
+      peptides: try ParserFastaFile.parse(filePath: peptidesFilePath),
+      proteome: try ParserFastaFile.parse(filePath: proteomeFilePath),
       onProgress: { total, progress, matches in
         loading.progress(
           progress: progress,

@@ -15,36 +15,31 @@ struct MatchesData: Codable {
 final class Matcher {
   
   static func runAsync(
-    peptidesFilePath: String,
-    proteomeFilePath: String,
+    peptides: [FastaData],
+    proteome: [FastaData],
     onProgress: @escaping (_ total: Int, _ progress: Int, _ matches: Int) -> Void,
     onComplete: @escaping (_ matches: [MatchesData]) throws -> Void) throws {
     
     var matches: [MatchesData] = []
     var matchesCounter: Int = 0
     var progressCounter: Int = 0
+    let runSize = peptides.count * proteome.count
     
-    let peptides = try ParserFastaFile.parse(filePath: peptidesFilePath)
-    let proteome = try ParserFastaFile.parse(filePath: proteomeFilePath)
-        
-    let proteomeTotal = peptides.count * proteome.count
-    onProgress(proteomeTotal, progressCounter, matchesCounter)
-    let _ = proteome.asyncMap { proSec in
-      let _ = peptides.asyncMap { pepSec in
+    let _ = proteome.asyncMap { pro in
+      let _ = peptides.asyncMap { pep in
         progressCounter+=1
-        if proSec.data.contains(pepSec.data) {
-          matchesCounter+=1
-          onProgress(proteomeTotal, progressCounter, matchesCounter)
+        if pro.data.contains(pep.data) {
           matches.append(
             MatchesData(
-              peptide: pepSec,
-              proteome: proSec
+              peptide: pep,
+              proteome: pro
             )
           )
+          matchesCounter+=1
+          onProgress(runSize, progressCounter, matchesCounter)
         }
       }
     }
-    onProgress(proteomeTotal, proteomeTotal, matchesCounter)
     try onComplete(matches)
     
   }
