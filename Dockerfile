@@ -1,5 +1,5 @@
 #
-# Pixotope Cloud
+# VacciBody
 # Dockerfile
 #
 # Builder image

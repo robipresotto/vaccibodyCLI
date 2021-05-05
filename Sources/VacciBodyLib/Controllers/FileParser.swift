@@ -49,7 +49,9 @@ final class ParserFastaFile {
   static func writeData(data: [MatchesData]) throws -> Void {
     
     // Save data to file
-    let filePath = URL(fileURLWithPath: "/result.json")
+    let fileManager = FileManager.default
+    let path = fileManager.currentDirectoryPath
+    let filePath = URL(fileURLWithPath: path + "/result.json")
     let json = try JSONEncoder().encode(data)
     guard let dataString = String(data: json, encoding: .utf8) else {
       throw FileParserError.cannotParseString

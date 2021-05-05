@@ -17,7 +17,7 @@ To build the solution from the source run `make`.
 - `make init` - build the solution on linux - generates the binary and the peptides/proteome matches file output.
 - `make build` - build the solution on linux and generates the binary on `/Resources` folder.
 - `make run` - run the solution and generates the peptides/proteome matches on the `/Resources` folder. (Note: provide the files /Resources/peptides.fasta + /Resources/proteome.fasta on the build step).
-- `make start` - re-run the solution and generates the peptides/proteome matches.
+- `make clean` - deletes the container
 ```
 /Resources/peptides.fasta
 /Resources/proteome.fasta
