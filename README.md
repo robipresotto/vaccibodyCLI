@@ -2,14 +2,8 @@
 
 The vaccibody command line interface is designed to run the following commands:
 - [x] Peptides/Proteome matcher
-- [ ] Working in progress
-
-run the command below:
-```sh
-vaccibody match "peptides.fasta" "proteome.fasta"
-```
-
-the application returns the peptides/proteome matches in `json` format on the root path.
+- [x] Help
+- [ ] WIP
 
 ## Getting started
 
@@ -22,6 +16,26 @@ To build the solution from the source run `make`.
 /Resources/peptides.fasta
 /Resources/proteome.fasta
 ```
+
+### Usage
+```sh
+USAGE: vaccibody <subcommand>
+
+OPTIONS:
+  -h, --help              Show help information.
+
+SUBCOMMANDS:
+  match                   Scan a list of short peptides against the proteome and returns the matches
+
+See 'vaccibody help <subcommand>' for detailed help.
+```
+
+Example:
+```sh
+vaccibody match "/peptides.fasta" "/proteome.fasta"
+```
+
+`match` command returns the peptides/proteome matches in `json` format on the root path.
 
 ### Building on XCode
 To build on mac run `make mac` - the process will download the dependencies and generate the XCode project file.
