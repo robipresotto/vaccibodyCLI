@@ -3,20 +3,78 @@ import XCTest
 
 final class MatcherTests: XCTestCase {
   
-  func testPeptidesAsyncMatcher() throws {
+  func testMatcher() throws {
+    
+    let peptides = try ParserFastaFile.parse(filePath: FastaFile.peptidesFilePath)
+    let proteome = try ParserFastaFile.parse(filePath: FastaFile.proteomeFilePath)
     
     self.measure {
       do {
         let _ = try Matcher.runAsync(
-          peptidesFilePath: FastaFile.peptidesFilePath,
-          proteomeFilePath: FastaFile.proteomeFilePath,
+          peptides: peptides,
+          proteome: proteome,
           onProgress: { total, progress, matches in
-            print("\(progress) of \(total) - matches: \(matches)")
-          }, onComplete: { matches in
-            print(matches)
+          print(progress, total, matches)
+        }, onComplete: { data in
+          print(data)
         })
       } catch {
-        XCTAssertThrowsError(error)
+        
+      }
+    }
+        
+  }
+  
+  func testBoyerMooreSearch() throws {
+    
+    let peptides = try ParserFastaFile.parse(filePath: FastaFile.peptidesFilePath)
+    let proteome = try ParserFastaFile.parse(filePath: FastaFile.proteomeFilePath)
+
+    self.measure {
+      var count = 0
+      let _ = proteome.asyncMap { pro in
+        let _ = peptides.asyncMap { pep in
+          if let _ = pro.data.boyerMooreSearch(of: pep.data) {
+            count+=1
+            print(count, pep, pro)
+          }
+        }
+      }
+    }
+    
+  }
+  
+  func testBruteForceSearch() throws {
+    
+    let peptides = try ParserFastaFile.parse(filePath: FastaFile.peptidesFilePath)
+    let proteome = try ParserFastaFile.parse(filePath: FastaFile.proteomeFilePath)
+
+    self.measure {
+      var count = 0
+      let _ = proteome.asyncMap { pro in
+        let _ = peptides.asyncMap { pep in
+          if let _ = pro.data.bruteForceSearch(pep.data) {
+            count+=1
+            print(count, pep, pro)
+          }
+        }
+      }
+    }
+    
+  }
+  
+  func testEntireFileSearch() throws {
+    
+    let peptides = try ParserFastaFile.parse(filePath: FastaFile.peptidesFilePath)
+    let proteome = try String(contentsOfFile: FastaFile.proteomeFilePath)
+    
+    self.measure {
+      var count = 0
+      let _ = peptides.map { peptide in
+        if proteome.bruteForceSearch(peptide.data) != nil {
+          count+=1
+          print(count)
+        }
       }
     }
     

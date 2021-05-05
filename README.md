@@ -2,7 +2,6 @@
 
 The vaccibody command line interface is designed to run the following commands:
 - [x] Peptides/Proteome matcher
-- [x] Help
 - [ ] WIP
 
 ## Getting started
