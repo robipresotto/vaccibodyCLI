@@ -34,7 +34,7 @@ final class MatcherTests: XCTestCase {
       var count = 0
       let _ = proteome.asyncMap { pro in
         let _ = peptides.asyncMap { pep in
-          if let _ = pro.data.boyerMooreSearch(of: pep.data) {
+          if let _ = pro.data.boyerMooreSearch(pep.data) {
             count+=1
             print(count, pep, pro)
           }
@@ -53,12 +53,38 @@ final class MatcherTests: XCTestCase {
       var count = 0
       let _ = proteome.asyncMap { pro in
         let _ = peptides.asyncMap { pep in
-          if let _ = pro.data.bruteForceSearch(pep.data) {
+          if pro.data.bruteForceSearch(pep.data) {
             count+=1
             print(count, pep, pro)
           }
         }
       }
+    }
+    
+  }
+  
+  func testBloomFilterSearch() throws {
+    
+    let peptides = try ParserFastaFile.parse(filePath: FastaFile.peptidesFilePath)
+    let proteome = try ParserFastaFile.parse(filePath: FastaFile.proteomeFilePath)
+    
+    let peptideslenght = peptides.first?.data.count ?? 9
+    var bloomFilter = BloomFilter<String>(size: peptides.count, hashCount: peptideslenght)
+    
+    self.measure {
+      
+      var count = 0
+      let _ = peptides.map { pep in
+        bloomFilter.insert(pep.data)
+      }
+      
+      let _ = proteome.map { pro in
+        if bloomFilter.contains(pro.data) {
+          count+=1
+          print(count)
+        }
+      }
+      
     }
     
   }
@@ -71,7 +97,7 @@ final class MatcherTests: XCTestCase {
     self.measure {
       var count = 0
       let _ = peptides.map { peptide in
-        if proteome.bruteForceSearch(peptide.data) != nil {
+        if proteome.bruteForceSearch(peptide.data) {
           count+=1
           print(count)
         }
